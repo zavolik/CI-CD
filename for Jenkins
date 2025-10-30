@@ -1,0 +1,46 @@
+pipeline {
+    // Где выполнять пайплайн
+    agent any
+    
+    // Переменные окружения
+    environment {
+        NODE_ENV = 'production'
+        APP_NAME = 'my-app'
+    }
+    
+    // Стейджи пайплайна
+    stages {
+        stage('Test') {
+            steps {
+                echo 'Запускаем тесты...'
+                sh 'npm install'
+                sh 'npm test'
+            }
+        }
+        
+        stage('Build') {
+            steps {
+                echo 'Собираем приложение...'
+                sh 'npm run build'
+                echo "Сборка ${APP_NAME} завершена!"
+            }
+        }
+        
+        stage('Deploy') {
+            steps {
+                echo 'Деплоим на сервер...'
+                sh './deploy.sh'
+            }
+        }
+    }
+    
+    // Действия после пайплайна
+    post {
+        success {
+            echo 'Пайплайн успешно завершён!'
+        }
+        failure {
+            echo 'Пайплайн упал :('
+        }
+    }
+}
