@@ -1,0 +1,32 @@
+Easy .gitlab-ci.yml
+
+stages:
+  - test
+  - build
+  - deploy
+
+run_tests:
+  stage: test
+  image: node:18-alpine
+  script:
+    - npm ci
+    - npm test
+
+build_app:
+  stage: build
+  image: node:18-alpine
+  script:
+    - npm ci
+    - npm run build
+  artifacts:
+    paths:
+      - dist/
+    expire_in: 1 week
+
+deploy_staging:
+  stage: deploy
+  script:
+    - echo "Deploying to staging..."
+  when: manual
+  only:
+    - develop
